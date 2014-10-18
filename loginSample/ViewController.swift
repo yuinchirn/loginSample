@@ -8,18 +8,101 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, NSURLConnectionDelegate {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
+    
+    override func viewDidAppear(animated: Bool) {
+        showLoginAlert()
+    }
+    
+    /* ログイン用アラート表示 */
+    func showLoginAlert(){
+        var alertController = UIAlertController(title: "Login", message: "", preferredStyle: .Alert)
+        
+        let otherAction = UIAlertAction(title: "Login", style: .Default) {
+            action in
+            
+            let textFields:Array<UITextField>? =  alertController.textFields as Array<UITextField>?
+            if textFields != nil {
+                
+                var userArray = [String]()
+                
+                for textField:UITextField in textFields! {
+                    println(textField.text)
+                    userArray.append(textField.text)
+                }
+                NSLog("ログインします。")
+                self.login(userArray[0], password: userArray[1])
+            }
+        }
+        
+        // ログインボタン
+        alertController.addAction(otherAction)
+        
+        alertController.addTextFieldWithConfigurationHandler({(text:UITextField!) -> Void in
+            text.placeholder = "ID"
+        })
+        
+        alertController.addTextFieldWithConfigurationHandler({(text:UITextField!) -> Void in
+            text.placeholder = "Password"
+            text.secureTextEntry = true
+        })
+        
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    /* 認証処理 */
+    func login(userName:NSString?, password:NSString?){
+        
+        println("userName:\(userName)。。password:\(password)")
+        if userName == nil || password == nil {
+            return self.showLoginAlert()
+        }
+        
+        let str = "userName=\(userName!)&password=\(password!)"
+        let strData = str.dataUsingEncoding(NSUTF8StringEncoding)
+        
+        // TODO URLの本番、devを分岐(application.conf)
+        var url = NSURL.URLWithString("http://localhost:9000/login")
+        var request = NSMutableURLRequest(URL: url)
+        
+        request.HTTPMethod = "POST"
+        request.HTTPBody = strData
+        
+        let connection: NSURLConnection = NSURLConnection(request: request, delegate: self, startImmediately: false)
+        
+        var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)
+        
+        // NSURLConnectionを使ってアクセス
+        NSURLConnection.sendAsynchronousRequest(request,
+            queue: NSOperationQueue.mainQueue(),
+            completionHandler: self.fetchResponse)
+    }
+    
+    /* responseの処理 */
+    func fetchResponse(res: NSURLResponse?, data: NSData?, error: NSError?) {
+        
+        // ステータスコード取得
+        let status = (res as NSHTTPURLResponse).statusCode
+        
+        // ステータス200:成功 それ以外:失敗
+        if status != 200{
+            println("ログイン失敗")
+            self.showLoginAlert()
+        }else{
+            println("ログイン成功")
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
+    
+    
+    
 }
-
