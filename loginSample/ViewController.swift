@@ -10,23 +10,27 @@ import UIKit
 
 class ViewController: UIViewController, NSURLConnectionDelegate {
     
+    var alertController = UIAlertController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        makeAlertViewController()
     }
     
     override func viewDidAppear(animated: Bool) {
         showLoginAlert()
     }
     
-    /* ログイン用アラート表示 */
-    func showLoginAlert(){
-        var alertController = UIAlertController(title: "Login", message: "", preferredStyle: .Alert)
+    /* ログイン用のアラートビューを作成 */
+    func makeAlertViewController(){
+        alertController = UIAlertController(title: "Login", message: "", preferredStyle: .Alert)
         
+        // ログインボタンが押された時のアクション
         let otherAction = UIAlertAction(title: "Login", style: .Default) {
             action in
             
-            let textFields:Array<UITextField>? =  alertController.textFields as Array<UITextField>?
+            let textFields:Array<UITextField>? =  self.alertController.textFields as Array<UITextField>?
             if textFields != nil {
                 
                 var userArray = [String]()
@@ -39,9 +43,8 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
                 self.login(userArray[0], password: userArray[1])
             }
         }
-        
-        // ログインボタン
         alertController.addAction(otherAction)
+        
         
         alertController.addTextFieldWithConfigurationHandler({(text:UITextField!) -> Void in
             text.placeholder = "ID"
@@ -51,11 +54,14 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
             text.placeholder = "Password"
             text.secureTextEntry = true
         })
-        
+    }
+    
+    /* ログイン用アラートを表示 */
+    func showLoginAlert(){
         presentViewController(alertController, animated: true, completion: nil)
     }
     
-    /* 認証処理 */
+    /* ログイン認証処理 */
     func login(userName:NSString?, password:NSString?){
         
         println("userName:\(userName)。。password:\(password)")
@@ -83,7 +89,7 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
             completionHandler: self.fetchResponse)
     }
     
-    /* responseの処理 */
+    /* レスポンスの処理 */
     func fetchResponse(res: NSURLResponse?, data: NSData?, error: NSError?) {
         
         // ステータスコード取得
