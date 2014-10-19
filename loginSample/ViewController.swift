@@ -47,7 +47,7 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
         
         
         alertController.addTextFieldWithConfigurationHandler({(text:UITextField!) -> Void in
-            text.placeholder = "ID"
+            text.placeholder = "UserName"
         })
         
         alertController.addTextFieldWithConfigurationHandler({(text:UITextField!) -> Void in
