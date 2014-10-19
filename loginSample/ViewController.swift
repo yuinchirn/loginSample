@@ -81,8 +81,6 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
         
         let connection: NSURLConnection = NSURLConnection(request: request, delegate: self, startImmediately: false)
         
-        var data = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)
-        
         // NSURLConnectionを使ってアクセス
         NSURLConnection.sendAsynchronousRequest(request,
             queue: NSOperationQueue.mainQueue(),
