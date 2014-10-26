@@ -73,13 +73,13 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
         let strData = str.dataUsingEncoding(NSUTF8StringEncoding)
         
         // TODO URLの本番、devを分岐(application.conf)
-        var url = NSURL.URLWithString("http://localhost:9000/login")
-        var request = NSMutableURLRequest(URL: url)
+        let url = NSURL(string: "http://127.0.0.1:9000/login")
+        let request = NSMutableURLRequest(URL: url!)
         
         request.HTTPMethod = "POST"
         request.HTTPBody = strData
         
-        let connection: NSURLConnection = NSURLConnection(request: request, delegate: self, startImmediately: false)
+        let connection: NSURLConnection = NSURLConnection(request: request, delegate: self, startImmediately: false)!
         
         // NSURLConnectionを使ってアクセス
         NSURLConnection.sendAsynchronousRequest(request,
@@ -88,7 +88,7 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
     }
     
     /* レスポンスの処理 */
-    func fetchResponse(res: NSURLResponse?, data: NSData?, error: NSError?) {
+    func fetchResponse(res: NSURLResponse!, data: NSData!, error: NSError!) {
         
         // ステータスコード取得
         let status = (res as NSHTTPURLResponse).statusCode
@@ -106,7 +106,4 @@ class ViewController: UIViewController, NSURLConnectionDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
-    
 }
